@@ -144,10 +144,18 @@ func (target *Target) Process(src interface{}) (dst interface{}, err error) {
 	return
 }
 
+// MD5 -- 签名函数的wrapper
+func (target *Target) MD5() (md5 uint64) {
+	i := target.db.Load()
+	defer i.Close()
+	md5 = i.Interface.(HotLoader).MD5()
+	return
+}
+
 // reload -- 重载，只允许内部使用
 func (target *Target) reload() (err error) {
 	i := target.creator()
-	md5 := i.MD5()
+	md5 := target.MD5()
 	if md5 == 0 { // md5为0的情况下认为是永远不更新
 		err = fmt.Errorf("0 for stamp")
 		return
