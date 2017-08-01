@@ -67,9 +67,12 @@ func doListen(event chan bool, function func(interface{}), data interface{}) {
 
 // doWatch 监控文件触发
 func doWatch(paths []string, function func(interface{}), data interface{}) {
-	// 先创建path
+	// 如果文件不存在，先创建path
 	for _, path := range paths {
-		os.Create(path)
+		_, err := os.Stat(path)
+		if err != nil && !os.IsExist(err) {
+			os.Create(path)
+		}
 	}
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
