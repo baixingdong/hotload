@@ -84,13 +84,14 @@ func doWatch(paths []string, function func(interface{}), data interface{}) {
 
 	for {
 		select {
-		case ev := <-watcher.Events:
-			if ev.Op == fsnotify.Remove || ev.Op == fsnotify.Rename {
-				// 如果监控到文件被删除或者被移动，停止监听
-				watcher.Close()
-				return
-			}
-			// 其他情况下触发reload
+		case <-watcher.Events:
+			//if ev.Op == fsnotify.Remove || ev.Op == fsnotify.Rename {
+			//	// 如果监控到文件被删除或者被移动，停止监听
+			//	watcher.Close()
+			//	return
+			//}
+			// 任何情况下触发reload
+			// XXX: 注意，vim等工具会改变inode，所以不要再区分Remove或者Rename的情况
 			function(data)
 		}
 	}
