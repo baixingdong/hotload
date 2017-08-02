@@ -89,8 +89,13 @@ func doWatch(paths []string, function func(interface{}), data interface{}) {
 				// 如果监控到文件被删除或者被移动，更换inode
 				watcher.Remove(ev.Name)
 				time.Sleep(time.Millisecond * 50)
+				_, err := os.Stat(ev.Name)
+				if err != nil && !os.IsExist(err) {
+					return
+				}
+				function(data)
 				watcher.Add(ev.Name)
-				return
+				continue
 			}
 			// 任何情况下触发reload
 			function(data)
