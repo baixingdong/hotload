@@ -150,6 +150,11 @@ func (target *Target) Load() (err error) {
 func (target *Target) Process(src interface{}) (dst interface{}, err error) {
 	i := target.db.Load()
 	defer i.Close()
+	if i.Interface == nil {
+		dst = nil
+		err = fmt.Errorf("nil target")
+		return
+	}
 	dst, err = i.Interface.(HotLoader).Process(src)
 	return
 }
