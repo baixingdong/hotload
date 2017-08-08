@@ -149,6 +149,11 @@ func (target *Target) Load() (err error) {
 // Process -- 处理函数的wrapper
 func (target *Target) Process(src interface{}) (dst interface{}, err error) {
 	i := target.db.Load()
+	if i == nil {
+		dst = nil
+		err = fmt.Errorf("nil target")
+		return
+	}
 	defer i.Close()
 	if i.Interface == nil {
 		dst = nil
